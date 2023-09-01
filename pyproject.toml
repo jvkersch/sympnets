@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sympnets"
+version = "0.0.1"
+dependencies = [
+             "click",
+             "numpy",
+             "scipy",
+             "matplotlib"
+]
+
+[project.scripts]
+sympnet-train = "sympnet.train:main"
+sympnet-run = "sympnet.run:main"
