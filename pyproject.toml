@@ -15,3 +15,4 @@ dependencies = [
 [project.scripts]
 sympnet-train = "sympnet.train:main"
 sympnet-run = "sympnet.run:main"
+sympnet-data = "sympnet.generate_data:main"

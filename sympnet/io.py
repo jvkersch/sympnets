@@ -17,7 +17,7 @@ def save_model(model, path):
 
     # Ensure that output directory (if any) exists
     path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     # Save weights
     torch.save(model.state_dict(), path)
 
@@ -33,7 +33,7 @@ def save_model(model, path):
 
 def load_model(path):
     path = Path(path)
-    
+
     # Load parameters
     args_path = path.with_suffix(".args")
     with open(args_path, "rt", encoding="utf-8") as fp:

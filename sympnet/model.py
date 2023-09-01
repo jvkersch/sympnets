@@ -9,7 +9,6 @@ def take(iterator, howmany):
 
 
 class Linear(nn.Module):
-
     def __init__(self, dim, kind="upper", device=None):
         super().__init__()
 
@@ -35,14 +34,11 @@ class Linear(nn.Module):
 
 
 class LinearStack(nn.Module):
-
     def __init__(self, dim, sublayers, device=None):
         super().__init__()
 
         kinds = take(["upper", "lower"], sublayers)
-        self._layers = nn.ModuleList([
-            Linear(dim, kind, device) for kind in kinds
-        ])
+        self._layers = nn.ModuleList([Linear(dim, kind, device) for kind in kinds])
 
         # bias parameters
         self._b_p = nn.Parameter(torch.empty(dim, device=device))
@@ -60,7 +56,6 @@ class LinearStack(nn.Module):
 
 
 class Activation(nn.Module):
-
     def __init__(self, dim, activation, kind="upper", device=None):
         super().__init__()
 
@@ -89,19 +84,18 @@ class Activation(nn.Module):
 
 
 class SympNet(nn.Module):
-
-    def __init__(
-            self, dim, n_layers, n_linear_sublayers, activation, device=None):
-
+    def __init__(self, dim, n_layers, n_linear_sublayers, activation, device=None):
         super().__init__()
 
         kinds = take(["upper", "lower"], n_layers)
         layers = []
         for kind in kinds:
-            layers.extend([
-                LinearStack(dim, n_linear_sublayers, device),
-                Activation(dim, activation, device=device, kind=kind)
-            ])
+            layers.extend(
+                [
+                    LinearStack(dim, n_linear_sublayers, device),
+                    Activation(dim, activation, device=device, kind=kind),
+                ]
+            )
         del layers[-1]  # no activation at the end
 
         self._layers = nn.ModuleList(layers)
@@ -110,12 +104,12 @@ class SympNet(nn.Module):
             "dim": dim,
             "n_layers": n_layers,
             "n_linear_sublayers": n_linear_sublayers,
-            "activation": activation
+            "activation": activation,
         }
 
     def forward(self, x):
         x = torch.atleast_2d(x)
-        p, q = x[:, :self._dim], x[:, self._dim:]
+        p, q = x[:, : self._dim], x[:, self._dim :]
 
         for layer in self._layers:
             p, q = layer(p, q)
