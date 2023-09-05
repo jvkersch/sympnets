@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import click
 
 import numpy as np
@@ -33,9 +36,10 @@ def _prepare_data_pendulum_xy(x0, h=0.1, N_train=40, N_test=100):
 
 @click.command()
 @click.argument("system")
+@click.option("--run_name", required=True)
 @click.option("--n_train", type=int, default=100)
 @click.option("--n_test", type=int, default=40)
-def main(system, n_train, n_test):
+def main(system, run_name, n_train, n_test):
     if system == "pendulum_xy":
         train, test = _prepare_data_pendulum_xy([0, 1])
     elif system == "pendulum_2copies":
@@ -50,8 +54,20 @@ def main(system, n_train, n_test):
         train = trajectory[:n_train]
         test = trajectory[:n_test]
 
-    fname = f"artifacts/data_{system}.npz"
-    np.savez(fname, train=train, test=test)
-    click.echo(f"Data saved as {fname}")
+    run_name = Path(run_name)
+    run_name.mkdir(parents=True, exist_ok=True)
+
+    data_fname = run_name / "data.npz"
+    np.savez(data_fname, train=train, test=test)
+    click.echo(f"Data saved as {data_fname}")
     click.echo(f"Train shape: {train.shape}")
     click.echo(f"Test shape: {test.shape}")
+
+    # Save metadata
+    metadata = {
+        "system": system,
+        "n_train": n_train,
+        "n_test": n_test,
+    }
+    with open(run_name / "metadata-data.json", "wt", encoding="utf-8") as fp:
+        json.dump(metadata, fp, indent=2)

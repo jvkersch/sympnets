@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import click
 
 import matplotlib.pyplot as plt
@@ -20,8 +22,10 @@ def _load_data(data):
 @click.option("--n_epochs", default=100_000, type=int)
 @click.option("--n_layers", default=3, type=int)
 @click.option("--n_linear_sublayers", default=2, type=int)
-@click.argument("data")
-def main(n_epochs, data, n_layers, n_linear_sublayers):
+@click.argument("run_name")
+def main(run_name, n_epochs, n_layers, n_linear_sublayers):
+    run_name = Path(run_name)
+    data = run_name / "data.npz"
     train_x, train_y, test_x, test_y = _load_data(data)
     dim = train_x.shape[-1] // 2
 
@@ -58,11 +62,14 @@ def main(n_epochs, data, n_layers, n_linear_sublayers):
             train_losses.append(loss.item())
             test_losses.append(test_loss.item())
 
-    fname = f"artifacts/model_dim_{dim}_epochs_{n_epochs}.pth"
-    save_model(model, fname)
-    click.echo(f"Model saved to {fname}")
+    model_fname = run_name / "model.pth"
+    save_model(model, model_fname)
+    click.echo(f"Model saved to {model_fname}")
 
     plt.semilogy(epochs, train_losses, label="Train")
     plt.semilogy(epochs, test_losses, label="Test")
     plt.legend()
-    plt.savefig("artifacts/training.png")
+
+    plot_fname = run_name / "training.png"
+    plt.savefig(plot_fname)
+    click.echo(f"Training plot saved to {plot_fname}")

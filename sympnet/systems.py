@@ -48,6 +48,7 @@ class CoupledPendulum(AbstractSystem):
 
 SYSTEMS = {
     "pendulum": Pendulum,
+    "coupled_pendulum": CoupledPendulum,
 }
 
 
