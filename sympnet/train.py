@@ -20,14 +20,15 @@ def _load_data(data):
 @click.option("--n_epochs", default=100_000, type=int)
 @click.argument("data")
 def main(n_epochs, data):
+    train_x, train_y, test_x, test_y = _load_data(data)
+    dim = train_x.shape[-1] // 2
+
     model = SympNet(
-        dim=1,
+        dim=dim,
         n_layers=3,
         n_linear_sublayers=2,
         activation=F.sigmoid,
     )
-
-    train_x, train_y, test_x, test_y = _load_data(data)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
     loss_fn = torch.nn.MSELoss()
@@ -48,15 +49,16 @@ def main(n_epochs, data):
                 predicted_test_y = model(test_x)
                 test_loss = loss_fn(predicted_test_y, test_y)
 
-            print(f"{i}: training loss {loss.item()}, " f"test loss {test_loss.item()}")
+            print(f"{i}: training loss {loss.item()}, "
+                  f"test loss {test_loss.item()}")
 
             epochs.append(i)
             train_losses.append(loss.item())
             test_losses.append(test_loss.item())
 
-    fname = f"artifacts/model_dim_1_epochs_{n_epochs}.pth"
+    fname = f"artifacts/model_dim_{dim}_epochs_{n_epochs}.pth"
     save_model(model, fname)
-    print(f"Model saved to {fname}")
+    click.echo(f"Model saved to {fname}")
 
     plt.semilogy(epochs, train_losses, label="Train")
     plt.semilogy(epochs, test_losses, label="Test")
