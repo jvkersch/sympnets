@@ -22,8 +22,9 @@ def _load_data(data):
 @click.option("--n_epochs", default=100_000, type=int)
 @click.option("--n_layers", default=3, type=int)
 @click.option("--n_linear_sublayers", default=2, type=int)
+@click.option("--lr", default=0.0001, type=float)
 @click.argument("run_name")
-def main(run_name, n_epochs, n_layers, n_linear_sublayers):
+def main(run_name, n_epochs, n_layers, n_linear_sublayers, lr):
     run_name = Path(run_name)
     data = run_name / "data.npz"
     train_x, train_y, test_x, test_y = _load_data(data)
@@ -36,7 +37,7 @@ def main(run_name, n_epochs, n_layers, n_linear_sublayers):
         activation=F.sigmoid,
     )
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_fn = torch.nn.MSELoss()
 
     epochs = []

@@ -36,8 +36,9 @@ class CoupledPendulum(AbstractSystem):
         self._pendulum = Pendulum()
 
     def get_trajectory(self, x0, ts):
-        traj1 = self._pendulum.get_trajectory(x0[(0, 2)], ts)
-        traj2 = self._pendulum.get_trajectory(x0[(1, 2)], ts)
+        x0 = np.asarray(x0)
+        traj1 = self._pendulum.get_trajectory(x0[[0, 2]], ts)
+        traj2 = self._pendulum.get_trajectory(x0[[1, 2]], ts)
         return np.column_stack([traj1[:, 0], traj2[:, 0],
                                 traj1[:, 1], traj2[:, 1]])
 

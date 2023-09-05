@@ -7,11 +7,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from .force_fields import f_pendulum
-from .systems import Pendulum
-
-SYSTEMS = {
-    "pendulum": (f_pendulum, [0, 1]),
-}
+from .systems import SYSTEMS
 
 
 def _run_solver(f, x0, N, h=0.1):
@@ -42,15 +38,16 @@ def _prepare_data_pendulum_xy(x0, h=0.1, N_train=40, N_test=100):
 def main(system, run_name, n_train, n_test):
     if system == "pendulum_xy":
         train, test = _prepare_data_pendulum_xy([0, 1])
-    elif system == "pendulum_2copies":
-        f, x0 = SYSTEMS["pendulum"]
-        train, test = _prepare_data_generic(f, x0)
-        train = np.repeat(train, 2, axis=-1)
-        test = np.repeat(test, 2, axis=-1)
+    elif system == "coupled_pendulum":
+        x0 = [1, 1, 0, 0]
+        ts = 0.1 * np.arange(n_train + n_test)
+        trajectory = SYSTEMS[system]().get_trajectory(x0, ts)
+        train = trajectory[:n_train]
+        test = trajectory[:n_test]
     else:  # pendulum
         x0 = [1, 0]
         ts = 0.1 * np.arange(n_train + n_test)
-        trajectory = Pendulum().get_trajectory(x0, ts)
+        trajectory = SYSTEMS[system]().get_trajectory(x0, ts)
         train = trajectory[:n_train]
         test = trajectory[:n_test]
 
