@@ -17,6 +17,8 @@ class AbstractSystem(ABC):
 
 class Pendulum(AbstractSystem):
 
+    x0 = [1, 0]
+
     def get_trajectory(self, x0, ts):
         return _run_solver(self._f, x0, ts)
 
@@ -31,6 +33,8 @@ class Pendulum(AbstractSystem):
 
 class CoupledPendulum(AbstractSystem):
     # 2 uncoupled pendulums
+
+    x0 = [1, 1, 0, 0]
 
     def __init__(self):
         self._pendulum = Pendulum()
