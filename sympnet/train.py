@@ -18,15 +18,17 @@ def _load_data(data):
 
 @click.command()
 @click.option("--n_epochs", default=100_000, type=int)
+@click.option("--n_layers", default=3, type=int)
+@click.option("--n_linear_sublayers", default=2, type=int)
 @click.argument("data")
-def main(n_epochs, data):
+def main(n_epochs, data, n_layers, n_linear_sublayers):
     train_x, train_y, test_x, test_y = _load_data(data)
     dim = train_x.shape[-1] // 2
 
     model = SympNet(
         dim=dim,
-        n_layers=3,
-        n_linear_sublayers=2,
+        n_layers=n_layers,
+        n_linear_sublayers=n_linear_sublayers,
         activation=F.sigmoid,
     )
 
